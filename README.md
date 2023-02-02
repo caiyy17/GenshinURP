@@ -72,10 +72,32 @@ The algorhthm is the standard froxel lighting.
 
 ![manylight](img/manylight.png)
 
-# Copyright
+# Credits
 
-The models all come from MiHoYo, available for fan-made purpose.
+1. Models from MiHoYo
 
-Star table is the HIP star table in public domain.
+https://genshin.hoyoverse.com/ja/news/detail/104561
 
-Earth textures come from NASA.
+2. The Hipparcos star catalog
+
+From ESA (European Space Agency) and the Hipparcos mission.
+
+ref. ESA, 1997, The Hipparcos and Tycho Catalogues, ESA SP-1200
+
+http://cdsweb.u-strasbg.fr/ftp/cats/I/239
+
+3. Earth textures from NASA.
+
+https://visibleearth.nasa.gov/collection/1484/blue-marble
+
+https://www.nasa.gov/multimedia/guidelines/index.html
+
+4. Milkway and Moon textures from Stellarium
+
+License for the JPL planets images
+
+http://www.jpl.nasa.gov/images/policy/index.cfm
+
+5. Constellation information from Stellarium
+
+https://github.com/Stellarium/stellarium/blob/master/CREDITS.md
