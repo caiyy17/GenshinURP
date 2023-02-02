@@ -71,3 +71,11 @@ It is supported natively by HDRP but not in URP. So I add it by some custom comp
 The algorhthm is the standard froxel lighting.
 
 ![manylight](img/manylight.png)
+
+# Copyright
+
+The models all come from MiHoYo, available for fan-made purpose.
+
+Star table is the HIP star table in public domain.
+
+Earth textures come from NASA.
