@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 01cc7a02414605943a5eea27d0080e5d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - atmosphere: {fileID: 11400000, guid: b679be9dd0c73c248b4ce6fd45df389d, type: 2}
+  - LongExposureStarTexture: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

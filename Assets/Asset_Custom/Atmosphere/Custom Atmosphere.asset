@@ -1,0 +1,78 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6dcd6151d9bed654d95f5c28f0a0c78c, type: 3}
+  m_Name: Custom Atmosphere
+  m_EditorClassIdentifier: 
+  atmosphereShader: {fileID: 4800000, guid: e5cda01ac58c9ee45b44e53e8d06b4ef, type: 3}
+  atmosphereComputeShader: {fileID: 7200000, guid: 3d9d7c0ef36b4a04abee3f528a0ab11e,
+    type: 3}
+  settings:
+    useAtmosphere: 1
+    transmittanceWidth: 256
+    transmittanceHeight: 64
+    skyViewWidth: 200
+    skyViewHeight: 100
+    cameraVolumeRes: 32
+    multiScatRes: 32
+    MultipleScatteringFactor: 1
+    top_radius: 6420
+    bottom_radius: 6360
+    sky_sun_illuminance: 10
+    rayleigh_scale_height: 8
+    mie_scale_height: 1.2
+    mie_phase_function_g: 0.8
+    ozone_width: 25
+    ozone_info: {x: -0.6666667, y: 0.06666667, z: 2.6666667, w: -0.06666667}
+    rayleigh_scattering: {r: 0.175287, g: 0.409607, b: 1, a: 0}
+    rayleigh_scattering_intensity: 0.0331
+    mie_scattering: {r: 1, g: 1, b: 1, a: 1}
+    mie_scattering_intensity: 0.003996
+    mie_absorption: {r: 1, g: 1, b: 1, a: 1}
+    mie_absorption_intensity: 0.000444
+    absorption_extinction: {r: 0.345561, g: 1, b: 0.045189, a: 0}
+    absorption_extinction_intensity: 0.001881
+    ground_albedo: {r: 0.6667, g: 0.6667, b: 0.6667, a: 0}
+    shadow_color_sun: {r: 1, g: 0.34312665, b: 0.13333333, a: 0}
+    shadow_color_sun_intensity: 0.15
+    use_custom_direction: 0
+    sun_direction: {x: 0, y: -0.7}
+    moon_direction: {x: 0, y: -9.42}
+    camera_position_on_earth: {x: 121, y: 31}
+    useJD: 0
+    jd_time_n: 2459832
+    jd_time_f: 0.9795834
+    autoTZ: 1
+    Day: {x: 2022, y: 9, z: 10}
+    Time: {x: 19, y: 30, z: 36}
+    TOD24: 19.51
+    timezone: 8
+    sun_illuminance: 100
+    sun_angle: 4
+    moon_illuminance: 10
+    moon_angle: 3.8
+    long_exposure: 0
+    star_size: 0.3
+    star_illuminance: 10
+    constellation_illuminance: 0.07
+    earth_map: {fileID: 2800000, guid: 80361eaa80f344cf9a8281f151391d5b, type: 3}
+    earth_map_illuminance: 3
+    earth_night_map: {fileID: 2800000, guid: a429b6342a99d4b9a89f34be8dbae613, type: 3}
+    earth_night_map_illuminance: 1
+    earth_cloud_map: {fileID: 2800000, guid: 099f8c1409db54a07bd50fbb6801bbce, type: 3}
+    earth_cloud_map_illuminance: 3
+    moon_map: {fileID: 2800000, guid: 5a226ccfaa9c59543934e8eb0980a4df, type: 3}
+    far_map: {fileID: 2800000, guid: 4a3675b09970a4896a0cbcba8ad5f72c, type: 3}
+    far_map_illuminance: 3.06
+    far_color: {r: 0.082352936, g: 0.24799395, b: 1, a: 0}
+    far_color_intensity: 0.01
+    SunVec: {x: -0.91030043, y: -0.30542105, z: 0.27941212}
+    MoonVec: {x: 0.9016997, y: 0.26809773, z: -0.3392067}

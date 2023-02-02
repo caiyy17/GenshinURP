@@ -1,0 +1,167 @@
+#pragma kernel FroxelXY
+#pragma kernel FroxelZ
+#pragma kernel Froxel
+
+#include "../ShaderLibrary/Core.hlsl"
+
+RWTexture2D<float4> _FroxelXY;
+RWTexture2D<float4> _FroxelZ;
+float4 _FroxelInfo;
+
+float4 GetPlane(float3 a, float3 b, float3 c)
+{
+    float3 normal = normalize(cross(b - a, c - a));
+    return float4(normal, dot(normal, a));
+}
+
+[numthreads(8, 8, 1)]
+void FroxelXY(uint3 id : SV_DispatchThreadID)
+{
+    float2 inverseXY = 1 / _FroxelInfo.xy;
+    float2 leftBottomUV = saturate(id.xy * inverseXY);
+    float2 rightTopUV = saturate(leftBottomUV + inverseXY);
+    float2 ClipLB = leftBottomUV * 2 - 1;
+    float2 ClipRT = rightTopUV * 2 - 1;
+    if (_ProjectionParams.x < 0)
+    {
+        ClipLB.y *= -1;
+        ClipRT.y *= -1;
+    }
+    float3 origin = GetCameraPositionWS();
+    float4x4 InvVP = UNITY_MATRIX_I_VP;
+
+    float4 LB = mul(InvVP, float4(ClipLB, 0, 1));
+    float4 LT = mul(InvVP, float4(ClipLB.x, ClipRT.y, 0, 1));
+    float4 RT = mul(InvVP, float4(ClipRT, 0, 1));
+    float4 RB = mul(InvVP, float4(ClipRT.x, ClipLB.y, 0, 1));
+    LB = LB / LB.w;
+    LT = LT / LT.w;
+    RT = RT / RT.w;
+    RB = RB / RB.w;
+    
+    uint2 index = 2 * id.xy;
+    _FroxelXY[index + int2(0, 0)] = GetPlane(LT.xyz, RT.xyz, origin); //top
+    _FroxelXY[index + int2(0, 1)] = GetPlane(RB.xyz, LB.xyz, origin); //bottom
+    _FroxelXY[index + int2(1, 0)] = GetPlane(LB.xyz, LT.xyz, origin); //left
+    _FroxelXY[index + int2(1, 1)] = GetPlane(RT.xyz, RB.xyz, origin); //right
+
+}
+
+[numthreads(1, 1, 8)]
+void FroxelZ(uint3 id : SV_DispatchThreadID)
+{
+    float3 origin = GetCameraPositionWS();
+    float4x4 InvVP = UNITY_MATRIX_I_VP;
+    float4 forwardW = mul(InvVP, float4(0, 0, 1, 1));
+    float3 forward = normalize(forwardW.xyz / forwardW.w - origin);
+
+    float maxDepth = min(_ProjectionParams.z, _FroxelInfo.w);
+    float front = lerp(_ProjectionParams.y, maxDepth, id.z / _FroxelInfo.z);
+    float back = lerp(_ProjectionParams.y, maxDepth, (id.z + 1) / _FroxelInfo.z);
+    float originDepth = dot(origin, forward);
+    
+    _FroxelZ[uint2(id.z, 0)] = float4(-forward, -front - originDepth);
+    _FroxelZ[uint2(id.z, 1)] = float4(forward, back + originDepth);
+}
+
+struct pointLight
+{
+    float3 color;
+    float intensity;
+    float4 sphere;
+};
+
+RWStructuredBuffer<uint2> _FroxelBuffer;
+RWStructuredBuffer<uint> _LightIndexBuffer;
+StructuredBuffer<pointLight> _LightBuffer;
+RWStructuredBuffer<uint> _LightCounter;
+Texture2D<float> _HierarchicalDepth;
+SamplerState sampler_HierarchicalDepth;
+float4 _LightInfo;
+
+#define MaxLights 96
+
+[numthreads(8, 8, 1)]
+void Froxel(uint3 id : SV_DispatchThreadID)
+{
+
+    //如果超出边界，直接返回
+    uint3 Res = _FroxelInfo.xyz;
+    if (_LightInfo.x <= 0 || id.x >= Res.x || id.y >= Res.y || id.z >= Res.z)
+    {
+        return;
+    }
+    
+    //获取froxel信息
+    float4 planes[6];
+    uint2 index = 2 * id.xy;
+    planes[0] = _FroxelXY[index + int2(0, 0)]; //top
+    planes[1] = _FroxelXY[index + int2(0, 1)]; //bottom
+    planes[2] = _FroxelXY[index + int2(1, 0)]; //left
+    planes[3] = _FroxelXY[index + int2(1, 1)]; //right
+    planes[4] = _FroxelZ[uint2(id.z, 0)];
+    planes[5] = _FroxelZ[uint2(id.z, 1)];
+
+    int clusterCount = 0;
+    uint ID = _FroxelInfo.x * _FroxelInfo.y * id.z + _FroxelInfo.x * id.y + id.x;
+    uint froxelLightCount = 0;
+
+    //获取froxel对应的最大深度，用于避免不必要的光照计算
+    float farDepth = min(_ProjectionParams.z, _FroxelInfo.w);
+    float front = lerp(_ProjectionParams.y, farDepth, id.z / _FroxelInfo.z);
+    float2 screenUV = ((float2)id.xy + 0.5) / _FroxelInfo.xy;
+    int level = _LightInfo.z;
+    float depthMax = _HierarchicalDepth.SampleLevel(sampler_HierarchicalDepth, screenUV, level).r;
+    depthMax = LinearEyeDepth(depthMax, _ZBufferParams);
+    if (step(depthMax, front) > 0)
+    {
+        _FroxelBuffer[ID] = int2(0, 0);
+        return;
+    }
+
+    //遍历光源，分别对6个面求交，如果通过测试，就将当前光源送入临时列表
+    float4 sphere = 0;
+    bool intersect = true;
+    uint IndexList[MaxLights] = (uint[MaxLights])0;
+    for (int j = 0; j < _LightInfo.x; j++)
+    {
+        intersect = true;
+        sphere = _LightBuffer[j].sphere;
+        UNITY_UNROLL
+        for (int i = 0; i < 6; i++)
+        {
+            if (dot(sphere.xyz, planes[i].xyz) > planes[i].w + sphere.w)
+            {
+                intersect = false;
+                break;
+            }
+        };
+
+        if (intersect)
+        {
+            IndexList[froxelLightCount] = j;
+            froxelLightCount++;
+        }
+
+        if (froxelLightCount > MaxLights)
+        {
+            break;
+        }
+    }
+
+    //将临时列表中的光源填入总列表，首先检测总列表够不够用
+    uint startIndex = 0;
+    if (_LightCounter[0] + froxelLightCount > uint(_FroxelInfo.x * _FroxelInfo.y * _FroxelInfo.z * _LightInfo.y))
+    {
+        _FroxelBuffer[ID] = int2(0, 0);
+        return;
+    }
+
+    InterlockedAdd(_LightCounter[0], froxelLightCount, startIndex);
+    UNITY_LOOP
+    for (uint i = 0; i < froxelLightCount; i++)
+    {
+        _LightIndexBuffer[startIndex + i] = IndexList[i];
+    }
+    _FroxelBuffer[ID] = int2(startIndex, startIndex + froxelLightCount);
+}

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3da34c0ff09b574984958228618cf5a, type: 3}
+  m_Name: Custom SSR Settings
+  m_EditorClassIdentifier: 
+  deferShader: {fileID: 4800000, guid: 6e0982db7444c934582761d0378d1b27, type: 3}
+  PCSSShader: {fileID: 4800000, guid: 46739263636314e3382d47fe45f1c9fe, type: 3}
+  PyramidDepthShader: {fileID: 7200000, guid: 27c268cd5c27ae24685dae1d560755f5, type: 3}
+  FroxelComputeShader: {fileID: 7200000, guid: 427929e4047144168acd8bf44aae88d9, type: 3}
+  mipCountMax: 12
+  froxelMipLevel: 6
+  froxelSlice: 64
+  maxLightCount: 1024
+  maxFroxelLightAve: 8
+  froxelMaxDepth: 500
+  enablePCSS: 1
+  shadowFilter: 0
+  shadowMipLevel: 3
+  depthTestAngle: 1
+  PCSSAngle: 2
+  maxSoftDepth: 25
+  testCount: 32
+  enableJitter: 1

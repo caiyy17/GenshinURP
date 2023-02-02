@@ -1,0 +1,79 @@
+#pragma kernel HiZ_Generation_max
+#pragma kernel HiZ_Generation_min
+#pragma kernel HiZ_Generation_average
+
+#include "../ShaderLibrary/Core.hlsl"
+
+float4 _PrevCurr_Inverse_Size;
+Texture2D<float> _PrevMipDepth; SamplerState sampler_PrevMipDepth;
+RWTexture2D<float> _HierarchicalDepth;
+
+static const float2 mipOffset[4] = {
+    float2(0.5, 0.5), float2(0.5, -0.5), float2(-0.5, 0.5), float2(-0.5, -0.5),
+};
+
+float depthMin(float a, float b, float c, float d)
+{
+    float temp1 = min(a, b);
+    float temp2 = min(c, d);
+    return min(temp1, temp2);
+}
+
+float depthMax(float a, float b, float c, float d)
+{
+    float temp1 = max(a, b);
+    float temp2 = max(c, d);
+    return max(temp1, temp2);
+}
+
+[numthreads(8, 8, 1)]
+void HiZ_Generation_max(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (id.xy + 0.5) * _PrevCurr_Inverse_Size.zw;
+    //float2 uv = (2 * id.xy + float2(1, 1)) * _PrevCurr_Inverse_Size.xy;
+
+    float temp00 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[0] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp01 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[1] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp10 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[2] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp11 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[3] * _PrevCurr_Inverse_Size.xy, 0);
+    #if UNITY_REVERSED_Z
+        float FinalMaxZ = depthMin(temp00, temp01, temp10, temp11);
+    #else
+        float FinalMaxZ = depthMax(temp00, temp01, temp10, temp11);
+    #endif
+    
+    _HierarchicalDepth[id.xy] = FinalMaxZ;
+}
+[numthreads(8, 8, 1)]
+void HiZ_Generation_min(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (id.xy + 0.5) * _PrevCurr_Inverse_Size.zw;
+    //float2 uv = (2 * id.xy + 1.5) * _PrevCurr_Inverse_Size.xy;
+    
+    float temp00 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[0] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp01 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[1] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp10 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[2] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp11 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[3] * _PrevCurr_Inverse_Size.xy, 0);
+    #if UNITY_REVERSED_Z
+        float FinalMinZ = depthMax(temp00, temp01, temp10, temp11);
+    #else
+        float FinalMinZ = depthMin(temp00, temp01, temp10, temp11);
+    #endif
+
+    _HierarchicalDepth[id.xy] = FinalMinZ;
+}
+
+[numthreads(8, 8, 1)]
+void HiZ_Generation_average(uint3 id : SV_DispatchThreadID)
+{
+    float2 uv = (id.xy + 0.5) * _PrevCurr_Inverse_Size.zw;
+    //float2 uv = (2 * id.xy + 1.5) * _PrevCurr_Inverse_Size.xy;
+    
+    float temp00 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[0] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp01 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[1] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp10 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[2] * _PrevCurr_Inverse_Size.xy, 0);
+    float temp11 = _PrevMipDepth.SampleLevel(sampler_PrevMipDepth, uv + mipOffset[3] * _PrevCurr_Inverse_Size.xy, 0);
+    float FinalAveZ = (temp00 + temp01 + temp10 + temp11) / 4;
+
+    _HierarchicalDepth[id.xy] = FinalAveZ;
+}

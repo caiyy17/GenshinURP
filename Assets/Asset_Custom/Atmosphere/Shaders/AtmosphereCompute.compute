@@ -1,0 +1,4 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel MultiScattCS
+#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+#include "AtmosphereCompute.hlsl"
