@@ -101,3 +101,7 @@ http://www.jpl.nasa.gov/images/policy/index.cfm
 5. Constellation information from Stellarium
 
 https://github.com/Stellarium/stellarium/blob/master/CREDITS.md
+
+6. Atmosphere rendering
+
+https://github.com/sebh/UnrealEngineSkyAtmosphere
