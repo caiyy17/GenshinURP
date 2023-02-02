@@ -52,7 +52,7 @@ From characters to buildings, they are all like Genshin. I implement the rim lig
 
 ![animestyle](img/animestyle.png)
 
-## parallax
+## Parallax
 
 I also add the parallax texture which I think is very important to improve the visual appearance in anime game.
 
@@ -64,9 +64,9 @@ I add the PCSS and TAA in this project, but it is actually quite slow and not ve
 
 ![PCSS](img/PCSS.png)
 
-## Many light
+## Many lights
 
-It is supported natively by HDRP but not in URP. So I add it by some custom compute shader. In this way I can support hundreds of lights in one scene.
+It is supported natively by HDRP but not in URP. So I add it by some custom compute shaders. In this way I can support hundreds of lights in one scene.
 
 The algorhthm is the standard froxel lighting.
 
