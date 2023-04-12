@@ -43,23 +43,23 @@ MonoBehaviour:
     ground_albedo: {r: 0.6667, g: 0.6667, b: 0.6667, a: 0}
     shadow_color_sun: {r: 1, g: 0.34312665, b: 0.13333333, a: 0}
     shadow_color_sun_intensity: 0.15
-    use_custom_direction: 0
-    sun_direction: {x: -90, y: -18.53}
+    use_custom_direction: 1
+    sun_direction: {x: 0, y: 19.3}
     moon_direction: {x: 90, y: 23.97}
     camera_position_on_earth: {x: 121, y: 31}
     useJD: 0
     jd_time_n: 2459832
-    jd_time_f: 0.96965027
+    jd_time_f: 0.9795834
     autoTZ: 1
     Day: {x: 2022, y: 9, z: 10}
-    Time: {x: 19, y: 16, z: 17}
-    TOD24: 19.271606
+    Time: {x: 19, y: 30, z: 36}
+    TOD24: 19.51
     timezone: 8
     sun_illuminance: 100
     sun_angle: 4
     moon_illuminance: 3.86
     moon_angle: 3.94
-    long_exposure: 1
+    long_exposure: 0
     star_size: 0.3
     star_illuminance: 10
     constellation_illuminance: 0.07
@@ -74,5 +74,5 @@ MonoBehaviour:
     far_map_illuminance: 3.06
     far_color: {r: 0.082352936, g: 0.24799395, b: 1, a: 0}
     far_color_intensity: 0.01
-    SunVec: {x: -0.93415475, y: -0.25528744, z: 0.24936518}
-    MoonVec: {x: 0.9247336, y: 0.21939772, z: -0.31101835}
+    SunVec: {x: -0, y: 0.33051437, z: 0.943801}
+    MoonVec: {x: -0.9200964, y: 0.3916919, z: -0.00000004021869}

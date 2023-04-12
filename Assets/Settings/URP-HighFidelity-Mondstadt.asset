@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   settings: {fileID: 11400000, guid: 4dca81d5b1148b242a428f2740be14cc, type: 2}
-  frameNum: 408
+  frameNum: 568
   onceEveryFrame: 0
 --- !u!114 &-2014127850101482221
 MonoBehaviour:
@@ -30,7 +30,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Active: 1
   atmosphere: {fileID: 11400000, guid: b679be9dd0c73c248b4ce6fd45df389d, type: 2}
-  frameNum: 176
+  frameNum: 337
   onceEveryFrame: 0
 --- !u!114 &-543928655958843906
 MonoBehaviour:
